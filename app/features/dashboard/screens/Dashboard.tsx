@@ -3,13 +3,7 @@ import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import {useGetUsersQuery} from '../employeeSlice';
 
 const Dashboard = () => {
-  const {
-    data: users,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetUsersQuery();
+  const {data: users, isLoading, isSuccess, isError, error} = useGetUsersQuery();
   if (isLoading) {
     return <ActivityIndicator size={'large'} />;
   }

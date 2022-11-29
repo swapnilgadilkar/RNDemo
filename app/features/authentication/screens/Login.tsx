@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import '../../../config/i18n';
 import {View, TextInput, StyleSheet, Button, Text} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useLoginMutation} from '../authApiSlice';
@@ -15,26 +16,27 @@ const Login: React.FC<any> = () => {
 
   const [currentLanguage, setLanguage] = useState('en');
 
-  const changeLanguage = (value) => {
+  const changeLanguage = value => {
+    value = currentLanguage === 'en' ? 'hi' : 'en';
     i18n
       .changeLanguage(value)
       .then(() => setLanguage(value))
       .catch(err => console.log(err));
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (): void => {
     try {
       const userData = await login({user, pwd}).unwrap();
       dispatch(setCredentials({...userData, user}));
       setUserName('');
       setPassword('');
     } catch (err) {
-        console.log("ERROR",JSON.stringify(err))
+      console.log('ERROR', JSON.stringify(err));
       if (!err?.originalStatus) {
         // isLoading: true until timeout occurs
         setErrMsg('No Server Response');
-      } else if (err.originalStatus === 400) {
+      } else if (err?.originalStatus === 400) {
         setErrMsg('Missing Username or Password');
-      } else if (err.originalStatus === 401) {
+      } else if (err?.originalStatus === 401) {
         setErrMsg('Unauthorized');
       } else {
         setErrMsg('Login Failed');
@@ -52,8 +54,10 @@ const Login: React.FC<any> = () => {
         <Text>{t('password')}</Text>
         <TextInput style={styles.inputField} value={pwd} onChangeText={txt => setPassword(txt)} />
       </View>
-      <Button title="Submit" onPress={handleSubmit} />
-      <Button title="Change Language" onPress={()=>changeLanguage("hi")} />
+      <View style={styles.buttonContainer}>
+        <Button title="Submit" onPress={handleSubmit} />
+        <Button title="Change Language" onPress={() => changeLanguage('hi')} />
+      </View>
     </View>
   );
 };
@@ -62,15 +66,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
-  inputContainer:{
-
+  inputContainer: {
+    margin: 20,
   },
-  inputField:{
+  inputField: {
     borderColor: 'green',
-    borderWidth:1
-  }
+    borderWidth: 1,
+  },
+  buttonContainer: {},
 });
 
 export {Login};
